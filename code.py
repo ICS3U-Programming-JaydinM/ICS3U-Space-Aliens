@@ -5,6 +5,6 @@
 
 
 # Displays Hello World
-print ("Hello World")
+print("Hello World")
 # Displays my name
-print ("Jaydin Madore")
+print("Jaydin Madore")
