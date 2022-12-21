@@ -24,7 +24,28 @@ def game_scene():
     game.render_block()
 
     while True:
+        # This code is for user input
+        # It give you the ability to move the Sprite
+        keys = ugame.buttons.get_pressed()
+        if keys & ugame.K_X:
+            print("A")
+        if keys & ugame.K_O:
+            print("B")
+        if keys & ugame.K_START:
+            print("Start")
+        if keys & ugame.K_SELECT:
+            print("Select")
+        if keys & ugame.K_RIGHT:
+            ship.move(ship.x + 1, ship.y)
+        if keys & ugame.K_LEFT:
+            ship.move(ship.x - 1, ship.y)
+        if keys & ugame.K_UP:
+            ship.move(ship.x, ship.y - 1)
+        if keys & ugame.K_DOWN:
+            ship.move(ship.x, ship.y + 1)
+        # The purpose of game.render_sprites([ship]) is to render it over and over again
         game.render_sprites([ship])
+        # The purpose of game.tick() is to stop the PyBadge from refreshing the entire screen 60 times in a second.
         game.tick()
 
 
