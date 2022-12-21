@@ -36,13 +36,13 @@ def game_scene():
         if keys & ugame.K_SELECT:
             print("Select")
         if keys & ugame.K_RIGHT:
-            ship.move(ship.x + 1, ship.y)
+            ship.move(ship.x + 2, ship.y)
         if keys & ugame.K_LEFT:
-            ship.move(ship.x - 1, ship.y)
+            ship.move(ship.x - 2, ship.y)
         if keys & ugame.K_UP:
-            ship.move(ship.x, ship.y - 1)
+            ship.move(ship.x, ship.y - 2)
         if keys & ugame.K_DOWN:
-            ship.move(ship.x, ship.y + 1)
+            ship.move(ship.x, ship.y + 2)
         # The purpose of game.render_sprites([ship]) is to render it over and over again
         game.render_sprites([ship])
         # The purpose of game.tick() is to stop the PyBadge from refreshing the entire screen 60 times in a second.
