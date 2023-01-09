@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-
 # Made by Jaydin Madore
-# # Made on 2022-12-16
+# Made on 2022-12-16
 
 
 import ugame
 import stage
+import constants
 
 
 # This function is the main game game_scene
@@ -15,7 +15,8 @@ def game_scene():
     image_bank_sprites = stage.Bank.from_bmp16("space_aliens.bmp")
     background = stage.Grid(image_bank_background, 10, 8)
     #
-    ship = stage.Sprite(image_bank_sprites, 5, 75, 66)
+    ship = stage.Sprite(image_bank_sprites, 5, 75, constants.SCREEN_Y -(2 * constants.SPRITE_SIZE))
+
     # set the frame rate to 60fps
     game = stage.Stage(ugame.display, 60)
     # Set the Layers of all sprites, items show up in order
@@ -36,9 +37,15 @@ def game_scene():
         if keys & ugame.K_SELECT:
             print("Select")
         if keys & ugame.K_RIGHT:
-            ship.move(ship.x + 2, ship.y)
+             if ship.x <= constants.SCREEN_X - constants.SPRITE_SIZE:
+                 ship.move(ship.x + 1, ship.y)
+             else:
+                 ship.move(constants.SCREEN_X - constants.SPRITE_SIZE, ship.y)
         if keys & ugame.K_LEFT:
-            ship.move(ship.x - 2, ship.y)
+            if ship.x >= 0:
+                 ship.move(ship.x - 1, ship.y)
+            else:
+                 ship.move(0, ship.y)
         if keys & ugame.K_UP:
             ship.move(ship.x, ship.y - 2)
         if keys & ugame.K_DOWN:
