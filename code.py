@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 # Made by Jaydin Madore
 # Made on 2022-12-16
 
@@ -9,52 +10,154 @@ import constants
 
 
 # This function is the main game game_scene
+def menu_scene():
+    # this function is the main menu scene
+
+    # image banks for CircuitPython
+    # image banks for CircuitPython
+    image_bank_ms_background = stage.Bank.from_bmp16("mt_game_studio.bmp")
+
+    # add text objects
+    text = []
+    text1 = stage.Text(width=29, height=12, font=None, palette=constants.RED_PALETTE, buffer=None)
+    text1.move(20,10)
+    text1.text("HC Game Studio")
+    text.append(text1)
+
+    text2 = stage.Text(width=29, height=12, font=None, palette=constants.RED_PALETTE, buffer=None)
+    text2.move(40, 110)
+    text2.text("PRESS START")
+    text.append(text2)
+
+    # set the backgorund image to 0 in the image bank
+    # and the size (10x8 tiles of size 16x16)
+    background = stage.Grid(image_bank_ms_background, constants.SCREEN_GRID_X, constants.SCREEN_GRID_Y)
+
+    # create a stage for the background to show up on
+    # and set the frame rate to 60fps
+    game = stage.Stage(ugame.display, 60)
+    
+    # set the layers of all sprites, items show up in order
+    game.layers = text + [background]
+    
+    # most likely you will only render the background once per game scene
+    game.render_block()
+
+    # repeat forever, game loop
+    while True:
+        
+        # get user input
+        keys = ugame.buttons.get_pressed()
+
+        # call game scene
+        if keys & ugame.K_START != 0:
+            game_scene()
+
+        # redraw Sprites
+        game.tick()
 def game_scene():
+    
     # image banks for CircuitPython
     image_bank_background = stage.Bank.from_bmp16("space_aliens_background.bmp")
     image_bank_sprites = stage.Bank.from_bmp16("space_aliens.bmp")
-    background = stage.Grid(image_bank_background, 10, 8)
+
+    # button that you want to keep state information on
+    a_button = constants.button_state["button_up"]
+    b_button = constants.button_state["button_up"]
+    start_button = constants.button_state["button_up"]
+    select_button = constants.button_state["button_up"]
+
+    # get sound ready
+    pew_sound = open("pew2.wav", 'rb')
+    sound = ugame.audio
+    sound.stop()
+    sound.mute(False)
+
     #
-    ship = stage.Sprite(image_bank_sprites, 5, 75, constants.SCREEN_Y -(2 * constants.SPRITE_SIZE))
-
-    # set the frame rate to 60fps
-    game = stage.Stage(ugame.display, 60)
-    # Set the Layers of all sprites, items show up in order
-    game.layers = [ship] + [background]
-
-    game.render_block()
+    ship = stage.Sprite(
+        image_bank_sprites, 5, 75, constants.SCREEN_Y - (2 * constants.SPRITE_SIZE)
+    )
+    alien = stage.Sprite(image_bank_sprites, 9,
+        int(constants.SCREEN_X / 2 - constants.SPRITE_SIZE / 2),
+        16,
+    )
 
     while True:
-        # This code is for user input
-        # It give you the ability to move the Sprite
+        # get user input
         keys = ugame.buttons.get_pressed()
-        if keys & ugame.K_X:
-            print("A")
-        if keys & ugame.K_O:
-            print("B")
-        if keys & ugame.K_START:
-            print("Start")
-        if keys & ugame.K_SELECT:
-            print("Select")
-        if keys & ugame.K_RIGHT:
-             if ship.x <= constants.SCREEN_X - constants.SPRITE_SIZE:
-                 ship.move(ship.x + 1, ship.y)
-             else:
-                 ship.move(constants.SCREEN_X - constants.SPRITE_SIZE, ship.y)
-        if keys & ugame.K_LEFT:
-            if ship.x >= 0:
-                 ship.move(ship.x - 1, ship.y)
+
+    # A button to fire
+        if keys & ugame.K_O != 0:
+            if a_button == constants.button_state["button_up"]:
+                a_button = constants.button_state["button_just_pressed"]
+            elif a_button == constants.button_state["button_just_pressed"]:
+                a_button = constants.button_state["button_still_pressed"]
+                
+        else:
+            if a_button == constants.button_state["button_still_pressed"]:
+                a_button = constants.button_state["button_released"]
             else:
-                 ship.move(0, ship.y)
-        if keys & ugame.K_UP:
-            ship.move(ship.x, ship.y - 2)
-        if keys & ugame.K_DOWN:
-            ship.move(ship.x, ship.y + 2)
-        # The purpose of game.render_sprites([ship]) is to render it over and over again
-        game.render_sprites([ship])
-        # The purpose of game.tick() is to stop the PyBadge from refreshing the entire screen 60 times in a second.
-        game.tick()
+                a_button = constants.button_state["button_up"]
+        # button functions
+        if keys & ugame.K_X != 0:
+            pass
+        if keys & ugame.K_START != 0:
+            pass
+        if keys & ugame.K_SELECT != 0:
+            pass
+        if keys & ugame.K_RIGHT != 0:
+            # move the ship to the right 
+            # if it hits the border it will wrap to the other side of the screen
+            if ship.x <= constants.SCREEN_X - constants.SPRITE_SIZE:
+                ship.move(ship.x + 2, ship.y)
+            else:
+                ship.move(0, ship.y)
+        if keys & ugame.K_LEFT != 0:
+            # move ship to the left
+            # if it hits the border it will wrap to the other side of the screen
+            if ship.x >= 0:
+                ship.move(ship.x - 2, ship.y)
+            else:  
+                ship.move(constants.SCREEN_X - constants.SPRITE_SIZE, ship.y)
+        if keys & ugame.K_UP != 0:
+            pass
+        if keys & ugame.K_DOWN != 0:
+            pass
 
-
+    # button functions
+            if keys & ugame.K_X != 0:
+                pass
+            if keys & ugame.K_START != 0:
+                pass
+            if keys & ugame.K_SELECT != 0:
+                pass
+            if keys & ugame.K_RIGHT != 0:
+                # move the ship to the right 
+                # if it hits the border it will wrap to the other side of the screen
+                if ship.x <= constants.SCREEN_X - constants.SPRITE_SIZE:
+                    ship.move(ship.x + 2, ship.y)
+                else:
+                    ship.move(0, ship.y)
+            if keys & ugame.K_LEFT != 0:
+                # move ship to the left
+                # if it hits the border it will wrap to the other side of the screen
+                if ship.x >= 0:
+                    ship.move(ship.x - 2, ship.y)
+                else:  
+                    ship.move(constants.SCREEN_X - constants.SPRITE_SIZE, ship.y)
+            if keys & ugame.K_UP != 0:
+                pass
+            if keys & ugame.K_DOWN != 0:
+                pass
+            # update game logic
+            if a_button == constants.button_state["button_just_pressed"]:
+                # fire a laser, if we have enough power (have not used up all the lasers)
+                for laser_number in range(len(lasers)):
+                    if lasers[laser_number].x < 0:
+                        lasers[laser_number].move(ship.x, ship.y)
+                        # play sound if A was just pressed
+                        sound.play(pew_sound)
+                        break
+                    
 if __name__ == "__main__":
     game_scene()
